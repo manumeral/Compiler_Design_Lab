@@ -23,10 +23,10 @@
 #define XOR_TOK '^'
 
 #define DEQ_TOK 256
-#define LAND_TOK 257
-#define LOR_TOK 258
 #define DPLUS_TOK 259
 #define DMINUS_TOK 260
+#define LOR_TOK 261
+#define LAND_TOK 262
 
 #define WHILE_TOK 350
 #define IF_TOK 351
@@ -92,7 +92,7 @@ bool check(char initial,int length,char *test)
 	}
 	else
 	{
-		while( ! (isspace(ch) ))
+		while( (isalnum(ch) ))
 		{
 			yytext[i]=ch;
 			yyleng++;
@@ -100,6 +100,7 @@ bool check(char initial,int length,char *test)
 			ch=getc(fp);
 		}
 		yytext[i]='\0';
+		ungetc(ch,fp);
 		return false;
 	}
 }
@@ -163,12 +164,43 @@ int yylex()
 		case MOD_TOK :
 		case LT_TOK :
 		case NOT_TOK :
-		case BAND_TOK :
-		case XOR_TOK :
-		case BOR_TOK :	yytext[0]=ch;
+		case XOR_TOK :	yytext[0]=ch;
 						yytext[1]='\0';
 						yyleng=1;
 						return ch;
+
+		case BAND_TOK : if((ch2 =getc(fp)) == BAND_TOK)
+						{
+							yytext[0]='&';
+							yytext[1]='&';
+							yytext[2]='\0';
+							yyleng=2;
+							return LAND_TOK;
+						}
+						else
+						{
+							yytext[0]='&';
+							yytext[1]='\0';
+							yyleng=1;
+							ungetc(ch2,fp);
+							return BAND_TOK;
+						}
+		case BOR_TOK : if((ch2 =getc(fp)) == BOR_TOK)
+						{
+							yytext[0]='|';
+							yytext[1]='|';
+							yytext[2]='\0';
+							yyleng=2;
+							return LOR_TOK;
+						}
+						else
+						{
+							yytext[0]='|';
+							yytext[1]='\0';
+							yyleng=1;
+							ungetc(ch2,fp);
+							return BOR_TOK;
+						}
 
 		case EQ_TOK : 	if((ch2 =getc(fp)) == EQ_TOK)
 						{
@@ -289,7 +321,7 @@ int main(int argc,char *argv[])
 	int token;
 	if(argc != 2)
 	{
-		fprintf(stderr,"Usage %s <inputfilename>\n",argv[1]);
+		fprintf(stderr,"Usage %s <inputfilename>\n",argv[0]);
 		exit(1);
 	} 
 	else
