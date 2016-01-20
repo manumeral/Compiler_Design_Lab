@@ -34,7 +34,7 @@
 #define ME_TOK 267
 #define MULE_TOK 268
 #define DE_TOK 269
-#define NULL_TOKEN 450
+#define EOF_TOKEN 450
 
 #define WHILE_TOK 350
 #define IF_TOK 351
@@ -79,7 +79,7 @@ int yylex()
 					else if(ch == ')') state = 6 ; 
 					else if(ch == '+') state = 7 ;
 					else if(ch == '-') state = 8 ;
-					else if(ch == '=') state = 85 ;
+					else if(ch == '=') state = 62 ;
 					else if(ch == '*') state = 9 ;
 					else if(ch == '/') state = 10 ;
 					else if(ch == '%') state = 11 ;
@@ -95,7 +95,7 @@ int yylex()
 					else if(isdigit(ch)) state = 52 ;
 					else if(ch == '{') state = 53 ;
 					else if(ch == '}') state = 54 ;
-					else return NULL_TOKEN;
+					else return EOF_TOKEN;
 					break;
 			case 1:	ch=getc(fp);
 					yytext[yyleng++]=ch;
@@ -227,7 +227,7 @@ int yylex()
 					break;
 			case 14:ch=getc(fp);
 					yytext[yyleng++]=ch;
-					if(ch == '&') state = 84 ;
+					if(ch == '&') state = 63 ;
 					else 
 					{
 						yytext[--yyleng]='\0';
@@ -325,7 +325,7 @@ int yylex()
 						state = -1 ;
 					}
 					break;
-			case 85:ch=getc(fp);
+			case 62:ch=getc(fp);
 					yytext[yyleng++]=ch;
 					if(ch == '=') state = 86 ;
 					else 
@@ -430,7 +430,7 @@ int yylex()
 					token = LE_TOK ;
 					state = -1;
 					break;
-			case 84:yytext[yyleng]='\0';
+			case 63:yytext[yyleng]='\0';
 					token = LAND_TOK;
 					state = -1;
 					break;
